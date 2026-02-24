@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>emfau | Game & App Developer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-display { font-family: 'Space Grotesk', sans-serif; }
+        
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 5px; }
+        
+        .glass {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-strong {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .glow-blue { box-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+        .glow-purple { box-shadow: 0 0 20px rgba(168, 85, 247, 0.5); }
+        .glow-green { box-shadow: 0 0 20px rgba(34, 197, 94, 0.5); }
+        .glow-amber { box-shadow: 0 0 20px rgba(245, 158, 11, 0.5); }
+        .glow-pink { box-shadow: 0 0 20px rgba(236, 72, 153, 0.5); }
+        
+        .text-glow { text-shadow: 0 0 20px rgba(59, 130, 246, 0.5); }
+        .gradient-text {
+            background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 50%, #34d399 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .bg-grid {
+            background-size: 50px 50px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+        }
+        
+        .app-card, .game-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .app-card:hover, .game-card:hover {
+            transform: translateY(-8px);
+        }
+        
+        /* Phone Mockup - Full Screen Style */
+        .phone-mockup {
+            border: 12px solid #1e293b;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            background: #000;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.8),
+                0 0 0 1px rgba(255, 255, 255, 0.1),
+                inset 0 0 20px rgba(0,0,0,0.5);
+        }
+        
+        /* Notch/Status-Bar entfernt - kein ::before mehr */
+        
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .phone-screen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+        }
+        
+        /* Status Bar Overlay - ENTFERNT */
+        /* .status-bar { ... } - komplett entfernt */
+        
+        /* Reflection/Gloss Effect */
+        .phone-gloss {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(255,255,255,0.1) 0%,
+                transparent 40%,
+                transparent 60%,
+                rgba(255,255,255,0.05) 100%
+            );
+            z-index: 18;
+            pointer-events: none;
+        }
+        
+        .timeline-item {
+            position: relative;
+            padding-left: 2rem;
+            border-left: 2px solid rgba(168, 85, 247, 0.3);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            background: #a855f7;
+            border-radius: 50%;
+        }
+        
+        .timeline-item-green {
+            position: relative;
+            padding-left: 2rem;
+            border-left: 2px solid rgba(34, 197, 94, 0.3);
+        }
+        .timeline-item-green::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 0;
+            width: 10px;
+            height: 10px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+        
+        .lang-btn {
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .lang-btn.active {
+            background: rgba(59, 130, 246, 0.4);
+            border-color: rgba(59, 130, 246, 0.8);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.3);
+        }
+        .lang-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        
+        .expandable-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, opacity 0.3s ease-out;
+            opacity: 0;
+        }
+        .expandable-content.open {
+            max-height: 2000px;
+            opacity: 1;
+        }
+        
+        .war-story {
+            transition: all 0.3s ease;
+        }
+        .war-story:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(168, 85, 247, 0.2);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(168, 85, 247, 0.5); }
+            50% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.8); }
+        }
+        .animate-pulse-glow-purple { animation: pulse-glow 2s infinite; }
+        
+        .hidden-lang { display: none; }
+        
+        /* Game card image fix */
+        .game-card-img {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+        .game-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: top center;
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-white overflow-x-hidden">
+
+    <!-- Language Switcher - FIXED POSITION -->
+    <div class="fixed top-4 right-4 z-[60] flex gap-2">
+        <button onclick="switchLang('de')" id="btn-de" class="lang-btn active glass px-3 py-2 rounded-lg flex items-center gap-2 text-sm font-medium border border-white/10 hover:bg-white/10 shadow-lg">
+            <span class="text-lg">🇩🇪</span>
+            <span class="hidden sm:inline font-bold">DE</span>
+        </button>
+        <button onclick="switchLang('en')" id="btn-en" class="lang-btn glass px-3 py-2 rounded-lg flex items-center gap-2 text-sm font-medium border border-white/10 hover:bg-white/10 shadow-lg">
+            <span class="text-lg">🇬🇧</span>
+            <span class="hidden sm:inline font-bold">EN</span>
+        </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-40 glass-strong transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center font-bold text-lg">e</div>
+                    <span class="font-display font-bold text-xl tracking-tight">emfau</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#apps" class="hover:text-purple-400 transition-colors px-3 py-2 rounded-md text-sm font-medium" data-de="Apps" data-en="Apps">Apps</a>
+                        <a href="#games" class="hover:text-blue-400 transition-colors px-3 py-2 rounded-md text-sm font-medium" data-de="Spiele" data-en="Games">Spiele</a>
+                        <a href="#my-way" class="hover:text-green-400 transition-colors px-3 py-2 rounded-md text-sm font-medium" data-de="Mein Weg" data-en="My Way">Mein Weg</a>
+                        <a href="https://github.com/emfau88" target="_blank" class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full text-sm font-medium transition-all">GitHub</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button onclick="toggleMenu()" class="text-gray-300 hover:text-white p-2">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden glass-strong border-t border-white/10">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#apps" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-white/10" data-de="Apps" data-en="Apps">Apps</a>
+                <a href="#games" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-white/10" data-de="Spiele" data-en="Games">Spiele</a>
+                <a href="#my-way" class="block px-3 py-2 rounded-md text-base font-medium hover:bg-white/10" data-de="Mein Weg" data-en="My Way">Mein Weg</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-grid">
+        <div id="particles" class="absolute inset-0 pointer-events-none"></div>
+        
+        <div class="absolute top-20 left-10 w-72 h-72 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-green-500/10 rounded-full blur-3xl"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="hero-content opacity-0 translate-y-10">
+                <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 mb-8 animate-float">
+                    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    <span class="text-sm text-gray-300" data-de="Verfügbar für neue Projekte" data-en="Available for new projects">Verfügbar für neue Projekte</span>
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-bold mb-6 leading-tight">
+                    <span class="gradient-text text-glow">emfau</span>
+                </h1>
+                
+                <p class="mt-4 max-w-3xl mx-auto text-xl text-gray-300 leading-relaxed font-medium">
+                    <span data-de="Ich lerne, wie man mit KI und verschiedenen Tools Dinge baut – und habe dabei vor allem viel darüber gelernt, wie man es *nicht* bauen sollte." data-en="I'm learning how to build things with AI and various tools – and I've learned a lot about how *not* to build them.">
+                        Ich lerne, wie man mit KI und verschiedenen Tools Dinge baut – und habe dabei vor allem viel darüber gelernt, wie man es *nicht* bauen sollte.
+                    </span>
+                </p>
+                
+                <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="#apps" class="group relative px-8 py-4 bg-purple-600 rounded-full font-semibold overflow-hidden glow-purple hover:scale-105 transition-transform">
+                        <span class="relative z-10" data-de="Apps ansehen" data-en="View Apps">Apps ansehen</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </a>
+                    <a href="#my-way" class="px-8 py-4 glass rounded-full font-semibold hover:bg-white/10 transition-all border border-white/20" data-de="Mehr über meinen Weg" data-en="More about my journey">
+                        Mehr über meinen Weg
+                    </a>
+                </div>
+
+                <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8 max-w-2xl mx-auto">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-purple-400">2</div>
+                        <div class="text-sm text-gray-500 mt-1" data-de="Android Apps" data-en="Android Apps">Android Apps</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-blue-400">3+</div>
+                        <div class="text-sm text-gray-500 mt-1" data-de="HTML5 Spiele" data-en="HTML5 Games">HTML5 Spiele</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-green-400">100%</div>
+                        <div class="text-sm text-gray-500 mt-1" data-de="Offline First" data-en="Offline First">Offline First</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-amber-400">0</div>
+                        <div class="text-sm text-gray-500 mt-1" data-de="Cloud Zwang" data-en="Cloud BS">Cloud Zwang</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- My Way / Learnings Section -->
+    <section id="my-way" class="py-24 relative bg-slate-900/50">
+        <div class="absolute inset-0 bg-grid opacity-30"></div>
+        
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-12">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span class="gradient-text">Mein Weg</span>
+                </h2>
+            </div>
+
+            <div class="glass rounded-3xl p-8 md:p-12 space-y-8">
+                <div class="border-l-4 border-blue-500 pl-6">
+                    <h3 class="text-xl font-bold text-blue-400 mb-3 flex items-center gap-2">
+                        <span>🤖</span>
+                        <span data-de="Das KI-Trugbild" data-en="The AI Illusion">Das KI-Trugbild</span>
+                    </h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        <span data-de="'Mach mir eine App' funktioniert – für etwa 10 Minuten. Dann beginnen die ersten Probleme mit steigender Komplexität. Hier beginnt das Lernen. Am besten weiß man von Beginn an, wie man mit KI umgeht: Rolle festlegen, Ziel klar benennen, Aufgabe konkret beschreiben, Regeln setzen, gewünschtes Ergebnis definieren. Klingt einfach – ist es aber nicht, wenn man es zum ersten Mal macht." data-en="'Make me an app' works – for about 10 minutes. Then the first problems begin with increasing complexity. This is where learning starts. Ideally, you know from the start how to work with AI: define the role, clearly state the goal, describe the task concretely, set rules, define the desired outcome. Sounds simple – but it isn't when you're doing it for the first time.">
+                            'Mach mir eine App' funktioniert – für etwa 10 Minuten. Dann beginnen die ersten Probleme mit steigender Komplexität. Hier beginnt das Lernen. Am besten weiß man von Beginn an, wie man mit KI umgeht: Rolle festlegen, Ziel klar benennen, Aufgabe konkret beschreiben, Regeln setzen, gewünschtes Ergebnis definieren. Klingt einfach – ist es aber nicht, wenn man es zum ersten Mal macht.
+                        </span>
+                    </p>
+                </div>
+
+                <div class="border-l-4 border-purple-500 pl-6">
+                    <h3 class="text-xl font-bold text-purple-400 mb-3 flex items-center gap-2">
+                        <span>💥</span>
+                        <span data-de="Was mich 600 Stunden ZeroHero lehrten" data-en="What 600 Hours of ZeroHero Taught Me">Was mich 600 Stunden ZeroHero lehrten</span>
+                    </h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        <span data-de="Meine größten Lehrmeister waren Fehler. Drei komplette Neustarts waren nötig, bis ich begriff, dass „einfach mal anfangen" bei bestimmten App-Projekten zuverlässig in strukturellem Chaos endet. Feature für Feature in ein unfertiges System zu drücken funktioniert nur so lange, bis man plötzlich in einer monolithischen Datei mit tausenden Zeilen feststeckt, die sich gegen jede Änderung wehrt. Die eigentliche Lektion war architektonisch: Man muss das System vorher zerlegen, das Konstrukt vollständig durchdenken und es von Grund auf so aufbauen, dass es wachsen kann. Ein Lego-Prinzip aus klaren, austauschbaren Bausteinen ist stabiler als monolithisches Wunschdenken. Gelernt habe ich das nicht durch Tutorials oder KI-Tools, sondern durch einen sehr guten Freund, von dem der entscheidende Hinweis kam: Nicht das Projekt scheitert, sondern die Herangehensweise. Ironischerweise hat mir trotz hunderter Stunden Arbeit und viel Ärger keine KI je gesagt, dass genau diese Grundannahme falsch war." data-en="My greatest teachers were mistakes. Three complete restarts were necessary until I realized that 'just starting' reliably ends in structural chaos for certain app projects. Pushing feature after feature into an unfinished system only works until you suddenly get stuck in a monolithic file with thousands of lines that fights every change. The real lesson was architectural: You have to break down the system beforehand, think through the construct completely, and build it from the ground up so it can grow. A Lego principle of clear, interchangeable building blocks is more stable than monolithic wishful thinking. I didn't learn this through tutorials or AI tools, but through a very good friend who gave me the crucial hint: It's not the project that fails, but the approach. Ironically, despite hundreds of hours of work and a lot of frustration, no AI ever told me that this basic assumption was wrong.">
+                            Meine größten Lehrmeister waren Fehler. Drei komplette Neustarts waren nötig, bis ich begriff, dass „einfach mal anfangen" bei bestimmten App-Projekten zuverlässig in strukturellem Chaos endet. Feature für Feature in ein unfertiges System zu drücken funktioniert nur so lange, bis man plötzlich in einer monolithischen Datei mit tausenden Zeilen feststeckt, die sich gegen jede Änderung wehrt. Die eigentliche Lektion war architektonisch: Man muss das System vorher zerlegen, das Konstrukt vollständig durchdenken und es von Grund auf so aufbauen, dass es wachsen kann. Ein Lego-Prinzip aus klaren, austauschbaren Bausteinen ist stabiler als monolithisches Wunschdenken. Gelernt habe ich das nicht durch Tutorials oder KI-Tools, sondern durch einen sehr guten Freund, von dem der entscheidende Hinweis kam: Nicht das Projekt scheitert, sondern die Herangehensweise. Ironischerweise hat mir trotz hunderter Stunden Arbeit und viel Ärger keine KI je gesagt, dass genau diese Grundannahme falsch war.
+                        </span>
+                    </p>
+                </div>
+
+                <div class="border-l-4 border-amber-500 pl-6">
+                    <h3 class="text-xl font-bold text-amber-400 mb-3 flex items-center gap-2">
+                        <span>🛠️</span>
+                        <span data-de="Das Setup-Problem" data-en="The Setup Problem">Das Setup-Problem</span>
+                    </h3>
+                    <p class="text-gray-400 leading-relaxed">
+                        <span data-de="VS Code, Cursor, Codex – das richtige Werkzeug zur richtigen Zeit. Aber wichtiger als das Tool ist die Disziplin, nicht in endlosen Konfigurationsschleifen zu verfallen." data-en="VS Code, Cursor, Codex – the right tool at the right time. But more important than the tool is the discipline not to fall into endless configuration loops.">
+                            VS Code, Cursor, Codex – das richtige Werkzeug zur richtigen Zeit. Aber wichtiger als das Tool ist die Disziplin, nicht in endlosen Konfigurationsschleifen zu verfallen.
+                        </span>
+                    </p>
+                </div>
+
+                <div class="border-l-4 border-green-500 pl-6">
+                    <h3 class="text-xl font-bold text-green-400 mb-3 flex items-center gap-2">
+                        <span>📋</span>
+                        <span data-de="Heute arbeite ich mit Regeln statt Chaos" data-en="Today I Work with Rules Instead of Chaos">Heute arbeite ich mit Regeln statt Chaos</span>
+                    </h3>
+                    <ul class="space-y-2 text-gray-400">
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span data-de="Klare Konventionen für mich und die KI" data-en="Clear conventions for me and the AI">Klare Konventionen für mich und die KI</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span data-de="Modulare Architektur statt God-Files" data-en="Modular architecture instead of God-files">Modulare Architektur statt God-Files</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span data-de="Features vorher definieren, dann bauen" data-en="Define features first, then build">Features vorher definieren, dann bauen</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-400 mt-1">✓</span>
+                            <span data-de="Fix-auf-Fix-Spiralen erkennen und vermeiden" data-en="Recognize and avoid fix-on-fix spirals">Fix-auf-Fix-Spiralen erkennen und vermeiden</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="text-center pt-6 border-t border-white/10">
+                    <p class="text-lg text-gray-300 font-medium">
+                        <span data-de="Trotzdem: Die Apps laufen. Die Spiele sind spielbar. Und ich bin noch immer am Lernen." data-en="Still: The apps run. The games are playable. And I'm still learning.">
+                            Trotzdem: Die Apps laufen. Die Spiele sind spielbar. Und ich bin noch immer am Lernen.
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Android Apps Section -->
+    <section id="apps" class="py-24 relative">
+        <div class="absolute inset-0 bg-grid opacity-30"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 section-header opacity-0">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span class="gradient-text">Android Apps</span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto" data-de="Native Mobile-Erlebnisse mit Flutter. Privacy-fokussiert, offline-first, designed für täglichen Impact." data-en="Native mobile experiences built with Flutter. Privacy-focused, offline-first, designed for daily impact.">
+                    Native Mobile-Erlebnisse mit Flutter. Privacy-fokussiert, offline-first, designed für täglichen Impact.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+                <!-- ZeroHero -->
+                <div class="app-card glass rounded-3xl p-8 opacity-0 translate-y-10 border-2 border-purple-500/30 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-2xl"></div>
+                    
+                    <div class="flex flex-col md:flex-row gap-8 items-center relative z-10">
+                        <!-- Phone Mockup ohne Notch und Status-Bar -->
+                        <div class="phone-mockup w-48 h-80 flex-shrink-0 relative glow-purple">
+                            <div class="phone-screen">
+                                <!-- Echter App Screenshot -->
+                                <img src="https://raw.githubusercontent.com/emfau88/portfolio/refs/heads/main/zeroblurred.png" alt="ZeroHero App Screenshot">
+                                
+                                <!-- Status Bar ENTFERNT -->
+                                
+                                <!-- Gloss Effect -->
+                                <div class="phone-gloss"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex-1 text-center md:text-left">
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/30 text-purple-400 text-xs font-semibold mb-4 animate-pulse-glow-purple">
+                                <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                                </svg>
+                                <span data-de="In Entwicklung" data-en="In Production">In Entwicklung</span>
+                            </div>
+                            <h3 class="text-3xl font-bold mb-2 text-white">ZeroHero</h3>
+                            <p class="text-gray-400 mb-4 text-sm leading-relaxed" data-de="Selbstkontroll- & Tracking-App zur Reduktion von Konsumverhalten. Tägliche Check-ins, EOD-Logik, Statistiken und Langzeit-Fortschrittsbewertung. Gamifiziert mit XP, Levels, Quests und Meilensteinen – kein sozialer Druck, keine Cloud nötig." data-en="Self-control & tracking app for reducing consumption behaviors. Daily check-ins, EOD logic, statistics, and long-term progress evaluation. Gamified with XP, levels, quests and milestones – no social pressure, no cloud required.">
+                                Selbstkontroll- & Tracking-App zur Reduktion von Konsumverhalten. Tägliche Check-ins, EOD-Logik, Statistiken und Langzeit-Fortschrittsbewertung. Gamifiziert mit XP, Levels, Quests und Meilensteinen – kein sozialer Druck, keine Cloud nötig.
+                            </p>
+                            
+                            <!-- ZeroHero Dev Diary - War Stories -->
+                            <div class="mb-6 p-4 bg-slate-800/50 rounded-xl border border-white/5">
+                                <h4 class="text-sm font-bold text-purple-400 mb-3 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="de-content">📓 Entwickler-Tagebuch: War Stories</span>
+                                    <span class="en-content hidden-lang">📓 Dev Diary: War Stories</span>
+                                </h4>
+                                
+                                <!-- War Stories Grid -->
+                                <div class="grid grid-cols-1 gap-3 mb-4">
+                                    <div class="war-story p-3 bg-slate-900/50 rounded-lg border border-purple-500/20">
+                                        <div class="flex items-start gap-3">
+                                            <span class="text-xl">🔥</span>
+                                            <div>
+                                                <div class="font-semibold text-purple-300 text-xs de-content">Der große Lösch-Tag (Juli '25)</div>
+                                                <div class="font-semibold text-purple-300 text-xs en-content hidden-lang">The Great Deletion Day (July '25)</div>
+                                                <div class="text-gray-500 text-[10px] mt-1 de-content">Prototyp #1 war "funktional"... wenn man Bugs als Features zählt. Erster Neustart.</div>
+                                                <div class="text-gray-500 text-[10px] mt-1 en-content hidden-lang">Prototype #1 was "functional"... if you count bugs as features. First restart.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="war-story p-3 bg-slate-900/50 rounded-lg border border-purple-500/20">
+                                        <div class="flex items-start gap-3">
+                                            <span class="text-xl">🏗️</span>
+                                            <div>
+                                                <div class="font-semibold text-purple-300 text-xs de-content">Architektur-Apokalypse (Aug '25)</div>
+                                                <div class="font-semibold text-purple-300 text-xs en-content hidden-lang">Architecture Apocalypse (Aug '25)</div>
+                                                <div class="text-gray-500 text-[10px] mt-1 de-content">Zweiter Neustart. Tageslogik explodierte. Lesson learned: Stabilität > Feature-Wahnsinn.</div>
+                                                <div class="text-gray-500 text-[10px] mt-1 en-content hidden-lang">Second restart. Daily logic exploded. Lesson learned: Stability > feature madness.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="war-story p-3 bg-slate-900/50 rounded-lg border border-purple-500/20">
+                                        <div class="flex items-start gap-3">
+                                            <span class="text-xl">🧠</span>
+                                            <div>
+                                                <div class="font-semibold text-purple-300 text-xs de-content">End-of-Day PTSD (Herbst '25)</div>
+                                                <div class="font-semibold text-purple-300 text-xs en-content hidden-lang">End-of-Day PTSD (Fall '25)</div>
+                                                <div class="text-gray-500 text-[10px] mt-1 de-content">DayKey-Mismatch, Force-Finalize-Fails, doppelte Logik. Ich sehe Cutoff-Zeiten im Schlaf.</div>
+                                                <div class="text-gray-500 text-[10px] mt-1 en-content hidden-lang">DayKey mismatch, force-finalize fails, double logic. I see cutoff times in my sleep.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="war-story p-3 bg-slate-900/50 rounded-lg border border-purple-500/20">
+                                        <div class="flex items-start gap-3">
+                                            <span class="text-xl">✅</span>
+                                            <div>
+                                                <div class="font-semibold text-green-400 text-xs de-content">Die 600-Stunden-Version (Feb '26)</div>
+                                                <div class="font-semibold text-green-400 text-xs en-content hidden-lang">The 600-Hour Version (Feb '26)</div>
+                                                <div class="text-gray-500 text-[10px] mt-1 de-content">Endlich stabil. Kein Social-Sharing, keine Zufallshooks. Feature-Zurückhaltung als Feature.</div>
+                                                <div class="text-gray-500 text-[10px] mt-1 en-content hidden-lang">Finally stable. No social sharing, no random hooks. Feature restraint as a feature.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Expand Button -->
+                                <button onclick="toggleZeroHeroStory()" class="w-full py-2 px-4 bg-purple-600/20 hover:bg-purple-600/30 border border-purple-500/30 rounded-lg text-xs font-semibold text-purple-300 transition-all flex items-center justify-center gap-2 group">
+                                    <span class="de-content">📖 Vollständige Entwicklungsgeschichte</span>
+                                    <span class="en-content hidden-lang">📖 Full Development Story</span>
+                                    <svg id="zerohero-arrow" class="w-4 h-4 transition-transform group-hover:translate-y-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+                                
+                                <!-- Expandable Full Story -->
+                                <div id="zerohero-fullstory" class="expandable-content mt-4">
+                                    <div class="p-4 bg-slate-900/80 rounded-lg border border-purple-500/10 text-xs">
+                                        <h5 class="font-bold text-purple-400 mb-3 de-content">📋 Detaillierte Timeline</h5>
+                                        <h5 class="font-bold text-purple-400 mb-3 en-content hidden-lang">📋 Detailed Timeline</h5>
+                                        
+                                        <div class="space-y-3">
+                                            <div class="timeline-item">
+                                                <div class="font-semibold text-gray-300 de-content">Juli 2025 – Erste Projektidee</div>
+                                                <div class="font-semibold text-gray-300 en-content hidden-lang">July 2025 – First Project Idea</div>
+                                                <div class="text-gray-500 de-content">Gamifiziertes, offline-first Selbst-Tracking. Explorative Prototypen, keine stabile Architektur. Erster kompletter Neustart.</div>
+                                                <div class="text-gray-500 en-content hidden-lang">Gamified, offline-first self-tracking. Exploratory prototypes, no stable architecture. First complete restart.</div>
+                                            </div>
+                                            
+                                            <div class="timeline-item">
+                                                <div class="font-semibold text-gray-300 de-content">Anfang August 2025 – Zweiter Neustart</div>
+                                                <div class="font-semibold text-gray-300 en-content hidden-lang">Early August 2025 – Second Restart</div>
+                                                <div class="text-gray-500 de-content">Erste App-Strukturen, Tageslogik noch instabil. Zweiter kompletter Neustart (strukturell nicht tragfähig).</div>
+                                                <div class="text-gray-500 en-content hidden-lang">First app structures, daily logic still unstable. Second complete restart (structurally not viable).</div>
+                                            </div>
+                                            
+                                            <div class="timeline-item">
+                                                <div class="font-semibold text-purple-400 de-content">22. August 2025 – Dritter Neustart (Aktuell)</div>
+                                                <div class="font-semibold text-purple-400 en-content hidden-lang">August 22, 2025 – Third Restart (Current)</div>
+                                                <div class="text-gray-500 de-content">Beginn der täglichen Projektberichte. Diese Codebasis existiert bis heute.</div>
+                                                <div class="text-gray-500 en-content hidden-lang">Start of daily project reports. This codebase exists to this day.</div>
+                                            </div>
+                                            
+                                            <div class="timeline-item">
+                                                <div class="font-semibold text-gray-300 de-content">September – Oktober 2025</div>
+                                                <div class="font-semibold text-gray-300 en-content hidden-lang">September – October 2025</div>
+                                                <div class="text-gray-500 de-content">Aufbau der Kernmechaniken: Quests, Achievements, Quotes, Progress/XP. Bewusster Verzicht auf Social-, Share- oder Zufalls-Hooks. Fokus: Stabilität vor Feature-Umfang.</div>
+                                                <div class="text-gray-500 en-content hidden-lang">Building core mechanics: Quests, Achievements, Quotes, Progress/XP. Conscious omission of social, share, or random hooks. Focus: Stability over feature scope.</div>
+                                            </div>
+                                            
+                                            <div class="timeline-item">
+                                                <div class="font-semibold text-gray-300 de-content">Herbst 2025 – Winter 2025/26</div>
+                                                <div class="font-semibold text-gray-300 en-content hidden-lang">Fall 2025 – Winter 2025/26</div>
+                                                <div class="text-gray-500 de-content">Zentrales technisches Thema: End-of-Day-/Cutoff-Logik. Probleme: DayKey-Mismatch, doppelte Bewertungslogik, Force-Finalize überschreibt Zusammenfassungen. Architektur wird mehrfach nachgeschärft.</div>
+                                                <div class="text-gray-500 en-content hidden-lang">Central technical theme: End-of-day/cutoff logic. Problems: DayKey mismatch, double evaluation logic, force-finalize overwrites summaries. Architecture refined multiple times.</div>
+                                            </div>
+                                            
+                                            <div class="timeline-item">
+                                                <div class="font-semibold text-green-400 de-content">Ende 2025 – Februar 2026</div>
+                                                <div class="font-semibold text-green-400 en-content hidden-lang">Late 2025 – February 2026</div>
+                                                <div class="text-gray-500 de-content">Stabilisierungsphase: klare Audit-Regeln, saubere Trennung von Fakten, Bewertung und Einordnung. Feature-Zurückhaltung zugunsten korrekter Persistenz und Lifecycle-Logik.</div>
+                                                <div class="text-gray-500 en-content hidden-lang">Stabilization phase: clear audit rules, clean separation of facts, evaluation, and classification. Feature restraint in favor of correct persistence and lifecycle logic.</div>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-4 text-[10px]">
+                                            <div>
+                                                <span class="text-gray-600 de-content">Neustarts: </span>
+                                                <span class="text-gray-600 en-content hidden-lang">Restarts: </span>
+                                                <span class="text-purple-400 font-bold">3</span>
+                                            </div>
+                                            <div>
+                                                <span class="text-gray-600 de-content">Aktive Version: </span>
+                                                <span class="text-gray-600 en-content hidden-lang">Active Version: </span>
+                                                <span class="text-purple-400 font-bold">22.08.2025</span>
+                                            </div>
+                                            <div class="col-span-2">
+                                                <span class="text-gray-600 de-content">Arbeitsaufwand gesamt: </span>
+                                                <span class="text-gray-600 en-content hidden-lang">Total effort: </span>
+                                                <span class="text-purple-400 font-bold">ca. 500–600 Stunden</span>
+                                            </div>
+                                            <div class="col-span-2">
+                                                <span class="text-gray-600 de-content">Größtes Problem: </span>
+                                                <span class="text-gray-600 en-content hidden-lang">Biggest challenge: </span>
+                                                <span class="text-purple-400 font-bold de-content">End-of-Day-/Tageslogik</span>
+                                                <span class="text-purple-400 font-bold en-content hidden-lang">End-of-day logic</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="mt-3 pt-3 border-t border-white/10 text-[10px] text-gray-600 italic de-content">
+                                    💡 Lesson learned: Manchmal muss man dreimal neu anfangen, um es einmal richtig zu machen.
+                                </div>
+                                <div class="mt-3 pt-3 border-t border-white/10 text-[10px] text-gray-600 italic en-content hidden-lang">
+                                    💡 Lesson learned: Sometimes you need to restart three times to get it right once.
+                                </div>
+                            </div>
+
+                            <ul class="text-sm text-gray-500 mb-6 space-y-2">
+                                <li class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span data-de="Offline-First Architektur" data-en="Offline-First Architecture">Offline-First Architektur</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span data-de="Gamification (XP, Levels, Quests)" data-en="Gamification (XP, Levels, Quests)">Gamification (XP, Levels, Quests)</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span data-de="Privacy-First (Keine Cloud)" data-en="Privacy-First (No Cloud)">Privacy-First (Keine Cloud)</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span data-de="Modular & Erweiterbar" data-en="Modular & Expandable">Modular & Erweiterbar</span>
+                                </li>
+                            </ul>
+                            
+                            <button onclick="notifyZeroHero()" class="w-full bg-purple-600 hover:bg-purple-500 text-white px-6 py-3 rounded-xl font-semibold transition-all glow-purple flex items-center justify-center gap-2">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
+                                <span data-de="Benachrichtige mich beim Release" data-en="Notify Me on Release">Benachrichtige mich beim Release</span>
+                            </button>
+                            <p class="text-xs text-gray-600 mt-3 text-center" data-de="Seriöses Tool für Verhaltensänderung. Coming soon." data-en="Serious tool for behavioral change. Coming soon.">Seriöses Tool für Verhaltensänderung. Coming soon.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ChargeGeist -->
+                <div class="app-card glass rounded-3xl p-8 opacity-0 translate-y-10 border-2 border-green-500/30 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-green-500/10 rounded-full blur-2xl"></div>
+                    
+                    <div class="flex flex-col md:flex-row gap-8 items-center relative z-10">
+                        <!-- Phone Mockup ohne Notch und Status-Bar -->
+                        <div class="phone-mockup w-48 h-80 flex-shrink-0 relative glow-green">
+                            <div class="phone-screen">
+                                <!-- Echter App Screenshot -->
+                                <img src="https://raw.githubusercontent.com/emfau88/portfolio/refs/heads/main/Chargegeist2.jpeg" alt="ChargeGeist App Screenshot">
+                                
+                                <!-- Status Bar ENTFERNT -->
+                                
+                                <!-- Gloss Effect -->
+                                <div class="phone-gloss"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex-1 text-center md:text-left">
+                            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-semibold mb-4">
+                                <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                                <span data-de="Live im Play Store" data-en="Live on Play Store">Live im Play Store</span>
+                            </div>
+                            <h3 class="text-3xl font-bold mb-2">ChargeGeist</h3>
+                            <p class="text-gray-400 mb-4 text-sm leading-relaxed" data-de="Sammle süße Geister jeden Tag. Ein gemütliches Sammler-Spiel mit über 250 handgezeichneten Geistern. Keine Werbung, keine Timer, 100% offline. Perfekt für Schlafensrituale und Mini-Pausen." data-en="Collect cute spirits every day. A cozy collector game with over 250 hand-drawn ghosts. No ads, no timers, 100% offline. Perfect for bedtime rituals and mini-breaks.">
+                                Sammle süße Geister jeden Tag. Ein gemütliches Sammler-Spiel mit über 250 handgezeichneten Geistern. Keine Werbung, keine Timer, 100% offline. Perfekt für Schlafensrituale und Mini-Pausen.
+                            </p>
+                            
+                            <!-- ChargeGeist Dev Diary -->
+                            <div class="mb-6 p-4 bg-slate-800/50 rounded-xl border border-white/5">
+                                <h4 class="text-sm font-bold text-green-400 mb-3 flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    <span class="de-content">📓 Entwickler-Tagebuch</span>
+                                    <span class="en-content hidden-lang">📓 Dev Diary</span>
+                                </h4>
+                                <div class="space-y-3 text-xs">
+                                    <div class="timeline-item-green">
+                                        <div class="font-semibold text-gray-300 de-content">Aug 2025 – Projektstart</div>
+                                        <div class="font-semibold text-gray-300 en-content hidden-lang">Aug 2025 – Project Start</div>
+                                        <div class="text-gray-500 de-content">„Nur ein 48h-Projekt", dachte ich. Classic mistake.</div>
+                                        <div class="text-gray-500 en-content hidden-lang">"Just a 48h project," I thought. Classic mistake.</div>
+                                    </div>
+                                    <div class="timeline-item-green">
+                                        <div class="font-semibold text-gray-300 de-content">Sep 2025 – Asset-Revolution</div>
+                                        <div class="font-semibold text-gray-300 en-content hidden-lang">Sep 2025 – Asset Revolution</div>
+                                        <div class="text-gray-500 de-content">Endlich konsistente, sammelwürdige Geister. Statt 48h: 200+ Stunden investiert.</div>
+                                        <div class="text-gray-500 en-content hidden-lang">Finally consistent, collectible spirits. Instead of 48h: 200+ hours invested.</div>
+                                    </div>
+                                    <div class="timeline-item-green">
+                                        <div class="font-semibold text-gray-300 de-content">Okt 2025 – Das Galerie-Prinzip</div>
+                                        <div class="font-semibold text-gray-300 en-content hidden-lang">Oct 2025 – The Gallery Principle</div>
+                                        <div class="text-gray-500 de-content">„Verborgen statt unsichtbar" – UX-Geniestreich mit psychologischem Effekt.</div>
+                                        <div class="text-gray-500 en-content hidden-lang">"Hidden instead of invisible" – UX masterstroke with psychological effect.</div>
+                                    </div>
+                                    <div class="timeline-item-green">
+                                        <div class="font-semibold text-green-400 de-content">Dez 2025 – Release 🎉</div>
+                                        <div class="font-semibold text-green-400 en-content hidden-lang">Dec 2025 – Release 🎉</div>
+                                        <div class="text-gray-500 de-content">Scope klein gehalten, Detailtiefe dafür umso größer.</div>
+                                        <div class="text-gray-500 en-content hidden-lang">Scope kept small, but detail depth all the greater.</div>
+                                    </div>
+                                </div>
+                                <div class="mt-3 pt-3 border-t border-white/10 text-[10px] text-gray-600 italic de-content">
+                                    💡 Lesson learned: Scope bleibt klein. Detailtiefe nicht.
+                                </div>
+                                <div class="mt-3 pt-3 border-t border-white/10 text-[10px] text-gray-600 italic en-content hidden-lang">
+                                    💡 Lesson learned: Scope stays small. Detail depth doesn't.
+                                </div>
+                            </div>
+
+                            <ul class="text-sm text-gray-500 mb-6 space-y-2">
+                                <li class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span data-de="250+ Einzigartige Geister" data-en="250+ Unique Spirits">250+ Einzigartige Geister</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span data-de="Tägliche Belohnungen" data-en="Daily Rewards">Tägliche Belohnungen</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                    <span data-de="Zero Stress Gameplay" data-en="Zero Stress Gameplay">Zero Stress Gameplay</span>
+                                </li>
+                            </ul>
+                            
+                            <a href="https://play.google.com/store/apps/details?id=com.energycrafted.chargegeist&hl=de" target="_blank" class="inline-flex items-center gap-3 bg-white text-slate-900 px-6 py-3 rounded-xl font-bold hover:scale-105 transition-transform w-full justify-center">
+                                <svg class="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
+                                </svg>
+                                <span data-de="Auf Google Play herunterladen" data-en="Get it on Google Play">Auf Google Play herunterladen</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- QR Code Section -->
+            <div class="mt-12 text-center">
+                <div class="inline-flex flex-col items-center gap-4 glass px-8 py-6 rounded-2xl">
+                    <div class="text-sm text-gray-400" data-de="Scannen für ChargeGeist" data-en="Scan for ChargeGeist">Scannen für ChargeGeist</div>
+                    <div class="w-32 h-32 bg-white p-2 rounded-xl">
+                        <svg viewBox="0 0 100 100" class="w-full h-full">
+                            <rect x="0" y="0" width="100" height="100" fill="white"/>
+                            <path d="M10,10 h30 v30 h-30 z M15,15 v20 h20 v-20 z M20,20 h10 v10 h-10 z" fill="black"/>
+                            <path d="M60,10 h30 v30 h-30 z M65,15 v20 h20 v-20 z M70,20 h10 v10 h-10 z" fill="black"/>
+                            <path d="M10,60 h30 v30 h-30 z M15,65 v20 h20 v-20 z M20,70 h10 v10 h-10 z" fill="black"/>
+                            <path d="M45,15 h5 v5 h-5 z M55,15 h5 v5 h-5 z M45,25 h5 v5 h-5 z M50,20 h5 v5 h-5 z M55,25 h5 v5 h-5 z" fill="black"/>
+                            <path d="M15,45 h5 v5 h-5 z M25,45 h5 v5 h-5 z M15,55 h5 v5 h-5 z M20,50 h5 v5 h-5 z M25,55 h5 v5 h-5 z" fill="black"/>
+                            <path d="M45,45 h5 v5 h-5 z M55,45 h5 v5 h-5 z M45,55 h5 v5 h-5 z M50,50 h5 v5 h-5 z M55,55 h5 v5 h-5 z" fill="black"/>
+                            <path d="M65,45 h5 v5 h-5 z M75,45 h5 v5 h-5 z M65,55 h5 v5 h-5 z M70,50 h5 v5 h-5 z M75,55 h5 v5 h-5 z" fill="black"/>
+                            <path d="M45,65 h5 v5 h-5 z M55,65 h5 v5 h-5 z M45,75 h5 v5 h-5 z M50,70 h5 v5 h-5 z M55,75 h5 v5 h-5 z" fill="black"/>
+                            <path d="M65,65 h5 v5 h-5 z M75,65 h5 v5 h-5 z M65,75 h5 v5 h-5 z M70,70 h5 v5 h-5 z M75,75 h5 v5 h-5 z" fill="black"/>
+                            <path d="M85,65 h5 v5 h-5 z M85,75 h5 v5 h-5 z" fill="black"/>
+                        </svg>
+                    </div>
+                    <div class="text-xs text-gray-500" data-de="oder „ChargeGeist" im Play Store suchen" data-en="or search "ChargeGeist" on Play Store">oder „ChargeGeist" im Play Store suchen</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- HTML5 Games Section -->
+    <section id="games" class="py-24 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 section-header opacity-0">
+                <h2 class="text-4xl md:text-5xl font-bold mb-4">
+                    <span class="gradient-text">HTML5 Games</span>
+                </h2>
+                <p class="text-gray-400 text-lg max-w-2xl mx-auto" data-de="Direkt im Browser spielen. Keine Installation nötig. Optimiert für Desktop und Mobile." data-en="Play directly in your browser. No installation required. Optimized for desktop and mobile.">
+                    Direkt im Browser spielen. Keine Installation nötig. Optimiert für Desktop und Mobile.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Waidmannsheil -->
+                <div class="game-card glass rounded-2xl overflow-hidden group opacity-0 translate-y-10">
+                    <div class="game-card-img bg-gradient-to-br from-green-900 to-slate-900">
+                        <img src="https://raw.githubusercontent.com/emfau88/portfolio/refs/heads/main/Waidmannsheil.jpg" alt="Waidmannsheil" class="group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="absolute top-4 right-4 px-3 py-1 bg-green-500/20 border border-green-500/30 rounded-full text-xs font-semibold text-green-400 backdrop-blur-sm z-10" data-de="Action" data-en="Action">Action</div>
+                    <div class="p-6 relative bg-slate-900/80">
+                        <h3 class="text-2xl font-bold mb-2 group-hover:text-green-400 transition-colors">Waidmannsheil</h3>
+                        <p class="text-gray-400 mb-4 text-sm leading-relaxed" data-de="Endloses Jagd-Abenteuer mit Wildtieren, Hochsitzen und verschiedenen Revieren. Schnelle Schieß-Action mit progressivem Schwierigkeitsgrad." data-en="Endless hunting adventure with wild animals, high seats, and different territories. Fast-paced shooting action with progressive difficulty.">
+                            Endloses Jagd-Abenteuer mit Wildtieren, Hochsitzen und verschiedenen Revieren. Schnelle Schieß-Action mit progressivem Schwierigkeitsgrad.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-300">Canvas API</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-300" data-de="Touch-Steuerung" data-en="Touch Controls">Touch-Steuerung</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-300">Sound FX</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <a href="https://emfau88.github.io/Jadg/" target="_blank" class="flex-1 bg-green-600 hover:bg-green-500 text-center py-3 rounded-xl font-semibold transition-all glow-green" data-de="Jetzt spielen" data-en="Play Now">Jetzt spielen</a>
+                            <a href="https://github.com/emfau88/Jadg" target="_blank" class="px-4 py-3 glass rounded-xl hover:bg-white/10 transition-all" title="Code ansehen">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Strategy (ehemals Siedler) -->
+                <div class="game-card glass rounded-2xl overflow-hidden group opacity-0 translate-y-10">
+                    <div class="game-card-img bg-gradient-to-br from-amber-900 to-slate-900">
+                        <img src="https://raw.githubusercontent.com/emfau88/portfolio/refs/heads/main/strategy.jpg" alt="Strategy" class="group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="absolute top-4 right-4 px-3 py-1 bg-amber-500/20 border border-amber-500/30 rounded-full text-xs font-semibold text-amber-400 backdrop-blur-sm z-10" data-de="Strategie" data-en="Strategy">Strategie</div>
+                    <div class="p-6 relative bg-slate-900/80">
+                        <h3 class="text-2xl font-bold mb-2 group-hover:text-amber-400 transition-colors">Strategy</h3>
+                        <p class="text-gray-400 mb-4 text-sm leading-relaxed" data-de="Klassisches Siedler-Game. Baue dein Hauptquartier, sammle Ressourcen, errichte Gebäude und erweitere dein Territorium." data-en="Classic settlement building game inspired by The Settlers. Build your headquarters, gather resources, construct buildings, and expand your territory.">
+                            Klassisches Siedler-Game. Baue dein Hauptquartier, sammle Ressourcen, errichte Gebäude und erweitere dein Territorium.
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-300">Isometrisch</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-300" data-de="Ressourcen-Mgmt" data-en="Resource Mgmt">Ressourcen-Mgmt</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-300">KI-Einheiten</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <a href="https://emfau88.github.io/Siedler/" target="_blank" class="flex-1 bg-amber-600 hover:bg-amber-500 text-center py-3 rounded-xl font-semibold transition-all glow-amber" data-de="Jetzt spielen" data-en="Play Now">Jetzt spielen</a>
+                            <a href="https://github.com/emfau88/Siedler" target="_blank" class="px-4 py-3 glass rounded-xl hover:bg-white/10 transition-all" title="Code ansehen">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bulldog Realm -->
+                <div class="game-card glass rounded-2xl overflow-hidden group opacity-0 translate-y-10">
+                    <div class="game-card-img bg-gradient-to-br from-pink-900 to-slate-900">
+                        <img src="https://raw.githubusercontent.com/emfau88/portfolio/refs/heads/main/bulldog.jpg" alt="Bulldog Realm" class="group-hover:scale-110 transition-transform duration-500">
+                    </div>
+                    <div class="absolute top-4 right-4 px-3 py-1 bg-pink-500/20 border border-pink-500/30 rounded-full text-xs font-semibold text-pink-400 backdrop-blur-sm z-10" data-de="RPG / Simulation" data-en="RPG / Simulation">RPG / Simulation</div>
+                    <div class="p-6 relative bg-slate-900/80">
+                        <h3 class="text-2xl font-bold mb-2 group-hover:text-pink-400 transition-colors">Bulldog Realm</h3>
+                        <p class="text-gray-400 mb-4 text-sm leading-relaxed" data-de="Ein einzigartiger Mix aus Tamagotchi und Dungeon-Crawler. Kümmere dich um deinen Old English Bulldog, trainiere ihn im Schloss und stell dich epischen Boss-Kämpfen in der Höllenfestung. Füttern, Spielen, Schlafen – aber auch Leveln, Skillen und Kämpfen!" data-en="A unique blend of Tamagotchi and dungeon crawler. Care for your Old English Bulldog, train him in the castle, and face epic boss battles in the Hell Fortress. Feed, play, sleep – but also level up, skill up, and fight!">
+                            Ein einzigartiger Mix aus Tamagotchi und Dungeon-Crawler. Kümmere dich um deinen Old English Bulldog, trainiere ihn im Schloss und stell dich epischen Boss-Kämpfen in der Höllenfestung. Füttern, Spielen, Schlafen – aber auch Leveln, Skillen und Kämpfen!
+                        </p>
+                        <div class="flex flex-wrap gap-2 mb-6">
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-300">Tamagotchi</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-300">Dungeon Crawler</span>
+                            <span class="px-3 py-1 bg-white/5 rounded-full text-xs text-gray-300">Boss Fights</span>
+                        </div>
+                        <div class="flex gap-3">
+                            <a href="https://emfau88.github.io/bulldog-realm/" target="_blank" class="flex-1 bg-pink-600 hover:bg-pink-500 text-center py-3 rounded-xl font-semibold transition-all glow-pink" data-de="Jetzt spielen" data-en="Play Now">Jetzt spielen</a>
+                            <a href="https://github.com/emfau88/bulldog-realm" target="_blank" class="px-4 py-3 glass rounded-xl hover:bg-white/10 transition-all" title="Code ansehen">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack Section -->
+    <section class="py-24 relative overflow-hidden bg-slate-900/30">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold mb-4 text-gray-300" data-de="Tech Stack" data-en="Tech Stack">Tech Stack</h2>
+                <p class="text-gray-500" data-de="Tools und Technologien, die ich nutze" data-en="Tools and technologies I use">Tools und Technologien, die ich nutze</p>
+            </div>
+            
+            <div class="flex flex-wrap justify-center gap-4 max-w-5xl mx-auto">
+                <div class="glass px-6 py-4 rounded-xl flex items-center gap-3 hover:scale-110 transition-transform cursor-default group">
+                    <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center text-2xl group-hover:rotate-12 transition-transform">📱</div>
+                    <div>
+                        <div class="font-semibold">Flutter</div>
+                        <div class="text-xs text-gray-500">Cross-Platform</div>
+                    </div>
+                </div>
+                
+                <div class="glass px-6 py-4 rounded-xl flex items-center gap-3 hover:scale-110 transition-transform cursor-default group">
+                    <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center text-2xl group-hover:rotate-12 transition-transform">💜</div>
+                    <div>
+                        <div class="font-semibold">Dart</div>
+                        <div class="text-xs text-gray-500">App Logic</div>
+                    </div>
+                </div>
+                
+                <div class="glass px-6 py-4 rounded-xl flex items-center gap-3 hover:scale-110 transition-transform cursor-default group">
+                    <div class="w-10 h-10 bg-orange-500/20 rounded-lg flex items-center justify-center text-2xl group-hover:rotate-12 transition-transform">🎨</div>
+                    <div>
+                        <div class="font-semibold">HTML5 Canvas</div>
+                        <div class="text-xs text-gray-500" data-de="Game Rendering" data-en="Game Rendering">Game Rendering</div>
+                    </div>
+                </div>
+                
+                <div class="glass px-6 py-4 rounded-xl flex items-center gap-3 hover:scale-110 transition-transform cursor-default group">
+                    <div class="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center text-2xl group-hover:rotate-12 transition-transform">⚡</div>
+                    <div>
+                        <div class="font-semibold">JavaScript</div>
+                        <div class="text-xs text-gray-500" data-de="Game Logik" data-en="Game Logic">Game Logik</div>
+                    </div>
+                </div>
+                
+                <div class="glass px-6 py-4 rounded-xl flex items-center gap-3 hover:scale-110 transition-transform cursor-default group">
+                    <div class="w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center text-2xl group-hover:rotate-12 transition-transform">🔷</div>
+                    <div>
+                        <div class="font-semibold">Visual Studio</div>
+                        <div class="text-xs text-gray-500">IDE & Debugging</div>
+                    </div>
+                </div>
+                
+                <div class="glass px-6 py-4 rounded-xl flex items-center gap-3 hover:scale-110 transition-transform cursor-default group">
+                    <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center text-2xl group-hover:rotate-12 transition-transform">🎵</div>
+                    <div>
+                        <div class="font-semibold">Web Audio API</div>
+                        <div class="text-xs text-gray-500" data-de="Sound Design" data-en="Sound Design">Sound Design</div>
+                    </div>
+                </div>
+                
+                <div class="glass px-6 py-4 rounded-xl flex items-center gap-3 hover:scale-110 transition-transform cursor-default group">
+                    <div class="w-10 h-10 bg-gray-500/20 rounded-lg flex items-center justify-center text-2xl group-hover:rotate-12 transition-transform">🐙</div>
+                    <div>
+                        <div class="font-semibold">GitHub</div>
+                        <div class="text-xs text-gray-500" data-de="Versionskontrolle" data-en="Version Control">Versionskontrolle</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About / Contact Section -->
+    <section id="about" class="py-24 relative">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-4xl font-bold mb-6 gradient-text" data-de="Lass uns verbinden" data-en="Let's Connect">Lass uns verbinden</h2>
+            <p class="text-gray-400 text-lg mb-8" data-de="Immer offen für Kollaboration bei sinnvollen Projekten. Privacy-first, offline-first, nutzerzentriert." data-en="Always open to collaboration on meaningful projects. Privacy-first, offline-first, user-centered.">
+                Immer offen für Kollaboration bei sinnvollen Projekten. Privacy-first, offline-first, nutzerzentriert.
+            </p>
+            
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="https://github.com/emfau88" target="_blank" class="glass px-8 py-4 rounded-full flex items-center gap-3 hover:bg-white/10 transition-all group">
+                    <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    <span class="font-semibold">GitHub</span>
+                </a>
+                
+                <a href="mailto:contact@emfau.dev" class="glass px-8 py-4 rounded-full flex items-center gap-3 hover:bg-white/10 transition-all group">
+                    <svg class="w-6 h-6 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <span class="font-semibold">Email</span>
+                </a>
+            </div>
+
+            <div class="mt-16 pt-8 border-t border-white/10 text-sm text-gray-600">
+                <p>© 2025 emfau. <span data-de="Gebaut mit" data-en="Built with">Gebaut mit</span> 💜, Flutter, <span data-de="und viel" data-en="and lots of">und viel</span> ☕.</p>
+                <p class="mt-2 text-xs">ZeroHero & ChargeGeist – <span data-de="Made in Germany" data-en="Made in Germany">Made in Germany</span></p>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Language Switcher
+        let currentLang = 'de';
+        
+        function switchLang(lang) {
+            currentLang = lang;
+            
+            // Update buttons
+            document.getElementById('btn-de').classList.toggle('active', lang === 'de');
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+            
+            // Update all elements with data-de and data-en attributes
+            document.querySelectorAll('[data-de]').forEach(el => {
+                el.textContent = el.getAttribute('data-' + lang);
+            });
+            
+            // Update HTML lang attribute
+            document.documentElement.lang = lang;
+            
+            // Toggle de-content and en-content classes
+            document.querySelectorAll('.de-content').forEach(el => {
+                el.classList.toggle('hidden-lang', lang !== 'de');
+            });
+            document.querySelectorAll('.en-content').forEach(el => {
+                el.classList.toggle('hidden-lang', lang !== 'en');
+            });
+            
+            // Save preference
+            localStorage.setItem('preferred-lang', lang);
+        }
+        
+        // Load saved preference
+        const savedLang = localStorage.getItem('preferred-lang');
+        if (savedLang && savedLang !== 'de') {
+            switchLang(savedLang);
+        }
+        
+        function toggleMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function notifyZeroHero() {
+            const email = prompt(currentLang === 'de' ? "Gib deine Email ein, um benachrichtigt zu werden, wenn ZeroHero released wird:" : "Enter your email to get notified when ZeroHero launches:");
+            if (email && email.includes('@')) {
+                alert(currentLang === 'de' ? "Danke! Wir benachrichtigen dich unter " + email + ", wenn ZeroHero bereit ist." : "Thanks! We'll notify you at " + email + " when ZeroHero is ready.");
+            } else if (email) {
+                alert(currentLang === 'de' ? "Bitte gib eine gültige Email-Adresse ein." : "Please enter a valid email address.");
+            }
+        }
+
+        function toggleZeroHeroStory() {
+            const content = document.getElementById('zerohero-fullstory');
+            const arrow = document.getElementById('zerohero-arrow');
+            
+            content.classList.toggle('open');
+            arrow.style.transform = content.classList.contains('open') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 5 + 's';
+                particle.style.opacity = Math.random() * 0.5 + 0.1;
+                
+                const size = Math.random() * 4 + 2;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                particle.style.position = 'absolute';
+                particle.style.background = 'rgba(59, 130, 246, 0.5)';
+                particle.style.borderRadius = '50%';
+                particle.style.pointerEvents = 'none';
+                
+                container.appendChild(particle);
+                
+                gsap.to(particle, {
+                    y: -100 - Math.random() * 100,
+                    x: (Math.random() - 0.5) * 100,
+                    duration: 10 + Math.random() * 10,
+                    repeat: -1,
+                    ease: "none"
+                });
+            }
+        }
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        gsap.to('.hero-content', {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out",
+            delay: 0.2
+        });
+
+        gsap.utils.toArray('.section-header').forEach(header => {
+            gsap.to(header, {
+                opacity: 1,
+                scrollTrigger: {
+                    trigger: header,
+                    start: "top 80%",
+                    toggleActions: "play none none reverse"
+                },
+                duration: 0.8,
+                ease: "power2.out"
+            });
+        });
+
+        gsap.to('.app-card', {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.2,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: "#apps",
+                start: "top 70%"
+            }
+        });
+
+        gsap.to('.game-card', {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            stagger: 0.2,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: "#games",
+                start: "top 70%"
+            }
+        });
+
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                navbar.classList.add('shadow-lg');
+                navbar.style.background = 'rgba(15, 23, 42, 0.95)';
+            } else {
+                navbar.classList.remove('shadow-lg');
+                navbar.style.background = 'rgba(15, 23, 42, 0.9)';
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        createParticles();
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
